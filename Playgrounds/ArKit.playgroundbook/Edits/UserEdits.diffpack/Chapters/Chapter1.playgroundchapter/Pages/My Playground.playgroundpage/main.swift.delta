@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Diff</key>
+	<array>
+		<dict>
+			<key>ModifiedContent</key>
+			<string>
+import ARKit
+import RealityKit
+import PlaygroundSupport
+
+/// Ar view 
+
+let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
+// 3 - Create simple AR cube to place in scene
+let mesh = MeshResource.generateBox(size: 0.2)
+let material = SimpleMaterial(color: .blue, roughness: 0.5, isMetallic: true)
+
+let modelEntity = ModelEntity(mesh: mesh, materials: [material])
+let anchorEntity = AnchorEntity(plane: .horizontal)
+
+anchorEntity.addChild(modelEntity)
+anchorEntity.name = "Cube"
+arView.scene.addAnchor(anchorEntity)
+
+/// Generate collision shapes 
+
+modelEntity.generateCollisionShapes(recursive: true)
+
+/// Gestures 
+
+arView.installGestures([.translation,.rotation,.scale], for : modelEntity)
+
+/// Extensions 
+
+extension ARView {
+    
+    func enableObjRemover() {
+        
+        let LongPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(recognizer:)))
+        
+        self.addGestureRecognizer(LongPress)
+        
+    }
+    
+    /// handleLongPress
+    
+    @objc func handleLongPress(recognizer : UILongPressGestureRecognizer)
+    {
+        let location = recognizer.location(in: self)
+        
+        if let entity = self.entity(at: location)
+        {
+            if let anchorEntity = entity.anchor, anchorEntity.name == "Cube"
+            {
+                anchorEntity.removeFromParent()
+                print("Removed anchor with name :" + anchorEntity.name)
+    
+            }
+            
+            
+        }
+        
+        
+    }
+
+}
+ arView.enableObjRemover()
+
+
+
+/// start the program 
+PlaygroundPage.current.setLiveView(arView)
+
+
+</string>
+			<key>ModifiedRange</key>
+			<string>{1, 1620}</string>
+			<key>OriginalContent</key>
+			<string></string>
+			<key>OriginalRange</key>
+			<string>{1, 0}</string>
+		</dict>
+	</array>
+	<key>File</key>
+	<string>Chapters/Chapter1.playgroundchapter/Pages/My Playground.playgroundpage/main.swift</string>
+</dict>
+</plist>
